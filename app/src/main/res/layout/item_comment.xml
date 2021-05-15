@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+
+        <import type="com.news.sky.util.AppUtil" />
+        <import type="android.view.View" />
+        <variable
+            name="onClickBinding"
+            type="com.news.sky.binding.OnClickBinding" />
+        <variable
+            name="comment"
+            type="com.news.sky.commentpart.Comment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/comment_avatar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:imageUrlCircleCrop="@{comment.img_url}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/comment_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:text="@{comment.nickname}"
+            android:textColor="@color/text_color_dark"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/comment_floor"
+            app:layout_constraintStart_toEndOf="@+id/comment_avatar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/comment_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:lineSpacingExtra="8sp"
+            android:text="@{comment.content}"
+            android:textColor="@color/text_color_dark"
+            android:textSize="16sp"
+            android:visibility='@{comment.content.equals("")?View.GONE:View.VISIBLE}'
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/comment_avatar"
+            app:layout_constraintTop_toBottomOf="@+id/comment_name" />
+
+        <TextView
+            android:id="@+id/comment_floor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:text='@{comment.floorNumber+" "+@string/floor}'
+            app:layout_constraintBottom_toBottomOf="@+id/comment_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/comment_name" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/image_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="@{comment.imageInfes.size()>0?View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/comment_avatar"
+            app:layout_constraintTop_toBottomOf="@+id/comment_content"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.3333" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.6666" />
+
+            <ImageView
+                android:id="@+id/comment_image0"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>0?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,0,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>0?(comment.imageInfes.get(0).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="@id/guideline0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>1?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,1,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>1?(comment.imageInfes.get(1).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="@id/guideline1"
+                app:layout_constraintStart_toStartOf="@+id/guideline0"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>2?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,2,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>2?(comment.imageInfes.get(2).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline1"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>3?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,3,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>3?(comment.imageInfes.get(3).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="@id/guideline0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comment_image0"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>4?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,4,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>4?(comment.imageInfes.get(4).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="@id/guideline1"
+                app:layout_constraintStart_toStartOf="@+id/guideline0"
+                app:layout_constraintTop_toBottomOf="@+id/comment_image0"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>5?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,5,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>5?(comment.imageInfes.get(5).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline1"
+                app:layout_constraintTop_toBottomOf="@+id/comment_image0"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image6"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>6?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,6,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>6?(comment.imageInfes.get(6).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="@id/guideline0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comment_image3"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image7"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>7?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,7,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>7?(comment.imageInfes.get(7).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="@id/guideline1"
+                app:layout_constraintStart_toStartOf="@+id/guideline0"
+                app:layout_constraintTop_toBottomOf="@+id/comment_image3"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/comment_image8"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                android:visibility="@{comment.imageInfes.size()>8?View.VISIBLE:View.GONE}"
+                android:onClick="@{(view)->onClickBinding.onImageClick(view,8,comment.imageInfes)}"
+                app:imageUrlNoRound='@{comment.imageInfes.size()>8?(comment.imageInfes.get(8).small):""}'
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline1"
+                app:layout_constraintTop_toBottomOf="@+id/comment_image3"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/comment_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@{AppUtil.timeFormat(comment.create_time)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/comment_name"
+            app:layout_constraintTop_toBottomOf="@+id/image_container" />
+
+        <TextView
+            android:id="@+id/comment_support"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text='@{@string/support+":"+comment.support_count}'
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/comment_floor"
+            app:layout_constraintTop_toBottomOf="@+id/image_container" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -2,6 +2,15 @@ package com.news.sky;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import static org.junit.Assert.*;
 
 /**
@@ -14,4 +23,13 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+
+    private static float[] f = new float[2];
+
+    @Test
+    public void test()  {
+
+    }
+
 }

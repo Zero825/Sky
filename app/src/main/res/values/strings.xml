@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Sky</string>
+
+    <string name="article">文章</string>
+    <string name="comment">评论</string>
+    <string name="source">来源</string>
+    <string name="author">作者</string>
+    <string name="editor">编辑</string>
+
+    <string name="floor">楼</string>
+    <string name="support">赞</string>
+    <string name="reply">回复</string>
+    <string name="hot_comment">热门评论</string>
+    <string name="all_comment">全部评论</string>
 </resources>

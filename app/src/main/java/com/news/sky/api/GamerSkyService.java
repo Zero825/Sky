@@ -1,10 +1,10 @@
 package com.news.sky.api;
 
-import com.google.gson.JsonObject;
-import com.news.sky.data.AppNewsListJson;
-import com.news.sky.data.AppNewsListPostJson;
+import com.news.sky.data.ArticleJson;
+import com.news.sky.data.ArticlePostJson;
+import com.news.sky.data.NewsJson;
+import com.news.sky.data.NewsPostJson;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -12,5 +12,9 @@ import retrofit2.http.POST;
 public interface GamerSkyService {
 
     @POST("/v5/getAppNewsList")
-    Call<AppNewsListJson> getAppNewsList(@Body AppNewsListPostJson appNewsListPostJson);
+    Call<NewsJson> getAppNewsList(@Body NewsPostJson newsPostJson);
+
+    @POST("/v5/getArticle")
+    Call<ArticleJson> getAppArticle(@Body ArticlePostJson articlePostJson);
 }
+

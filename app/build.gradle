@@ -57,8 +57,22 @@ dependencies {
     // Annotation processor
     annotationProcessor "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    def paging_version = "3.0.0-rc01"
+
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-rxjava3:$paging_version"
+
+    implementation "io.reactivex.rxjava3:rxjava:3.0.13-RC2"
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'com.billy.android:smart-swipe:1.1.2'
+    implementation 'com.github.piasy:BigImageViewer:1.8.0'
+    implementation 'com.github.piasy:GlideImageLoader:1.8.0'
+    implementation 'com.github.piasy:GlideImageViewFactory:1.8.0'
 }

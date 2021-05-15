@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View" />
+        <import type="com.news.sky.util.AppUtil" />
+        <variable
+            name="artilce"
+            type="com.news.sky.data.ArticleInformation" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_rectangle">
+
+        <TextView
+            android:id="@+id/article_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{artilce.title}"
+            android:textColor="@color/text_color_dark"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preview_image0" />
+
+        <TextView
+            android:id="@+id/artilce_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@{AppUtil.timeFormat(artilce.time)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/article_title"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/artilce_commentcount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@{String.valueOf(artilce.commentCount)}"
+            android:visibility="@{artilce.commentCount==0?View.INVISIBLE:View.VISIBLE}"
+            app:layout_constraintStart_toEndOf="@+id/artilce_time"
+            app:layout_constraintTop_toTopOf="@+id/artilce_time" />
+
+        <TextView
+            android:id="@+id/static_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/comment"
+            android:visibility="@{artilce.commentCount==0?View.INVISIBLE:View.VISIBLE}"
+            app:layout_constraintStart_toEndOf="@+id/artilce_commentcount"
+            app:layout_constraintTop_toTopOf="@+id/artilce_commentcount" />
+
+        <ImageView
+            android:id="@+id/preview_image0"
+            android:layout_width="100dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{artilce.previewImageUrl[0]}"
+            app:layout_constraintEnd_toStartOf="@+id/guide_line_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_line_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.33" />
+
+        <ImageView
+            android:id="@+id/preview_image1"
+            android:layout_width="100dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{artilce.previewImageUrl[1]}"
+            app:layout_constraintEnd_toStartOf="@+id/guide_line_2"
+            app:layout_constraintStart_toStartOf="@+id/guide_line_1"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_line_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.66" />
+
+        <ImageView
+            android:id="@+id/preview_image2"
+            android:layout_width="100dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{artilce.previewImageUrl[2]}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guide_line_2"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
