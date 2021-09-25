@@ -25,7 +25,7 @@ public class ImageBrowerActivity extends AppCompatActivity {
     public static final String IMAGE_LIST="IMAGE_LIST";
 
     @ViewPager2.OffscreenPageLimit
-    private static final int OFFSCREEN_PAGE_LIMIT = 8;
+    private static final int OFFSCREEN_PAGE_LIMIT = 2;
 
     private ActivityImageBrowerBinding binding;
     private ImageBrowerAdapter imageBrowerAdapter;

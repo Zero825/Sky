@@ -1,7 +1,6 @@
 package com.news.sky;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -13,8 +12,7 @@ import com.billy.android.swipe.SwipeConsumer;
 import com.billy.android.swipe.consumer.StayConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.news.sky.databinding.ActivityCommentBinding;
-
-import static com.billy.android.swipe.SwipeConsumer.DIRECTION_RIGHT;
+import com.news.sky.util.AppUtil;
 
 public class CommentActivity extends AppCompatActivity {
     private final static String TAG="CommentActivity";
@@ -47,7 +45,6 @@ public class CommentActivity extends AppCompatActivity {
 
     private void startListen(){
         StayConsumer stayConsumer = new StayConsumer();
-        stayConsumer.setOpenDistance(50);
         SmartSwipe.wrap(this)
                 .addConsumer(stayConsumer)
                 .enableLeft()

@@ -46,13 +46,14 @@ public class AppBindingAdapter {
         if(imageUrl==null||imageUrl.isEmpty()){
             return;
         }
+        if(imageView.getDrawable() != null){
+            imageView.setImageDrawable(null);
+        }
         RequestBuilder<Drawable> requestBuilder = Glide.with(imageView)
                 .load(imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade());
-        if(imageUrl.contains(".gif")){
-            requestBuilder = requestBuilder.transform(new RoundedCorners(ROUNDING_RADIUS_SMALL));
-        }else {
-            requestBuilder = requestBuilder.transform(new CenterCrop(),new RoundedCorners(ROUNDING_RADIUS));
+        if(!imageUrl.contains(".gif")){
+            requestBuilder.transform(new CenterCrop(),new RoundedCorners(ROUNDING_RADIUS));
         }
         requestBuilder.into(imageView);
     }
@@ -61,6 +62,9 @@ public class AppBindingAdapter {
     public static void setImageUrlCircleCrop(ImageView imageView,String imageUrl){
         if(imageUrl==null||imageUrl.isEmpty()){
             return;
+        }
+        if(imageView.getDrawable() != null){
+            imageView.setImageDrawable(null);
         }
         Glide.with(imageView)
                 .load(imageUrl)
@@ -73,11 +77,14 @@ public class AppBindingAdapter {
         if(imageUrl==null||imageUrl.isEmpty()){
             return;
         }
+        if(imageView.getDrawable() != null){
+            imageView.setImageDrawable(null);
+        }
         RequestBuilder<Drawable> requestBuilder = Glide.with(imageView)
                 .load(imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade());
         if(!imageUrl.contains(".gif")){
-            requestBuilder = requestBuilder.transform(new CenterCrop());
+            requestBuilder.transform(new CenterCrop());
         }
         requestBuilder.into(imageView);
     }
@@ -86,6 +93,9 @@ public class AppBindingAdapter {
     public static void setImageUrlNoCrop(ImageView imageView, String imageUrl){
         if(imageUrl==null||imageUrl.isEmpty()){
             return;
+        }
+        if(imageView.getDrawable() != null){
+            imageView.setImageDrawable(null);
         }
         Glide.with(imageView)
                 .load(imageUrl)
@@ -101,11 +111,13 @@ public class AppBindingAdapter {
                         int imageHeight = resource.getIntrinsicHeight();
                         ViewGroup.LayoutParams params = imageView.getLayoutParams();
                         params.height = (int) ((float) imageView.getWidth() / imageWidth * imageHeight);
-                        Glide.with(imageView)
+                        RequestBuilder<Drawable> requestBuilder = Glide.with(imageView)
                                 .load(imageUrl)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .transform(new RoundedCorners(ROUNDING_RADIUS_SMALL))
-                                .into(imageView);
+                                .transition(DrawableTransitionOptions.withCrossFade());
+                        if(!imageUrl.contains(".gif")) {
+                            requestBuilder.transform(new RoundedCorners(ROUNDING_RADIUS_SMALL));
+                        }
+                        requestBuilder.into(imageView);
                         return false;
                     }
                 }).preload();

@@ -74,8 +74,12 @@ public class DataTransform {
     public static Article appArticleJsonToArticle(ArticleJson articleJson){
         Article article=new Article();
         ArticleJson.Result result= articleJson.getResult().get(0);
-        article.setTitle(!result.getTitleIntact().isEmpty()?result.getTitleIntact():result.getTitle());
-        article.setUpdateTime(result.getUpdateTime().replace("T",""));
+        article.setTitle(result.getTitleIntact() == null
+                || result.getTitleIntact().isEmpty()
+                ? result.getTitle():result.getTitleIntact());
+        article.setUpdateTime(result.getUpdateTime() == null
+                || result.getUpdateTime().isEmpty()
+                ? result.getUpdateTime():result.getUpdateTime().replace("T",""));
         article.setSource(result.getCopyFrom());
         article.setAuthor(result.getAuthor());
         article.setEditor(result.getEditor());
@@ -100,8 +104,14 @@ public class DataTransform {
     }
 
     public static List<ArticlePart> artilceToArticlePart(Article article){
-        Elements articleElements=Jsoup.parse(article.getContent()).body().children();
         List<ArticlePart> articleParts = new ArrayList<>();
+
+        if (article.getContent() == null || article.getContent().isEmpty()){
+            return articleParts;
+        }
+
+        Elements articleElements=Jsoup.parse(article.getContent()).body().children();
+
 
         ArticleHeader articleHeader=new ArticleHeader();
         articleHeader.setTitle(article.getTitle());

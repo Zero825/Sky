@@ -1,22 +1,18 @@
 package com.news.sky;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
-import android.telephony.SmsMessage;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.news.sky.databinding.ActivityMainBinding;
+import com.news.sky.util.UIUtil;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG="MainActivity";
@@ -29,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
         binding=ActivityMainBinding.inflate(getLayoutInflater());
         View view=binding.getRoot();
         setContentView(view);
+        init();
+    }
+
+    private void init(){
+        UIUtil.setWindowTransparent(getWindow());
     }
 
 

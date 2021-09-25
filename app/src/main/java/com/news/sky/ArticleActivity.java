@@ -2,7 +2,6 @@ package com.news.sky;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,8 +15,8 @@ import com.billy.android.swipe.SwipeConsumer;
 import com.billy.android.swipe.consumer.StayConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.news.sky.databinding.ActivityArticleBinding;
+import com.news.sky.util.AppUtil;
 
-import static com.billy.android.swipe.SwipeConsumer.DIRECTION_LEFT;
 import static com.billy.android.swipe.SwipeConsumer.DIRECTION_RIGHT;
 
 public class ArticleActivity extends AppCompatActivity {
@@ -54,7 +53,6 @@ public class ArticleActivity extends AppCompatActivity {
 
     private void startListen(){
         StayConsumer stayConsumer = new StayConsumer();
-        stayConsumer.setOpenDistance(50);
         SmartSwipe.wrap(this)
                 .addConsumer(stayConsumer)
                 .enableHorizontal()

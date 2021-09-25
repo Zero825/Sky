@@ -12,5 +12,11 @@
 
     <color name="text_color_dark">@color/black</color>
     <color name="text_color_light">@color/white</color>
+    
+    <color name="primary_color_1">#FF9AC8E2</color>
+    <color name="primary_color_2">#FFDB7D74</color>
+    <color name="primary_color_3">#FFB8A6D9</color>
+    <color name="primary_color_4">#FFE799B0</color>
+    <color name="primary_color_5">#FF576690</color>
 
 </resources>

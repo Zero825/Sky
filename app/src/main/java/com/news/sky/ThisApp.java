@@ -24,7 +24,8 @@ public class ThisApp extends Application {
         SmartSwipeBack.activitySlidingBack(this, new SmartSwipeBack.ActivitySwipeBackFilter() {
             @Override
             public boolean onFilter(Activity activity) {
-                return !(activity instanceof MainActivity);
+                return !(activity instanceof MainActivity
+                        || activity instanceof ImageBrowerActivity);
             }
         }, SmartSwipe.dp2px(20, this), Color.TRANSPARENT,Color.TRANSPARENT,0,0.5f,DIRECTION_LEFT);
 
