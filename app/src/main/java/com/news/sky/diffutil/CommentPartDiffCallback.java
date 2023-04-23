@@ -36,7 +36,11 @@ public class CommentPartDiffCallback extends DiffUtil.ItemCallback<CommentPart> 
 
     @Override
     public boolean areContentsTheSame(@NonNull CommentPart oldItem, @NonNull CommentPart newItem) {
+        int oldItemType=oldItem.getType();
         int newItemType=newItem.getType();
+        if(oldItemType!=newItemType){
+            return false;
+        }
         if(newItemType==TYPE_COMMENT){
             return ((Comment) oldItem).getSupport_count()==((Comment) newItem).getSupport_count();
         }else if(newItemType==TYPE_REPLY){

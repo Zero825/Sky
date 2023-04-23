@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.news.sky.data.*{*;}
+-keep class com.news.sky.articlepart.*{*;}
+-keep class com.news.sky.commentpart.*{*;}

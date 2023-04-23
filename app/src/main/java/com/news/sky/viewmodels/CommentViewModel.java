@@ -1,5 +1,6 @@
 package com.news.sky.viewmodels;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -18,6 +19,7 @@ import com.news.sky.commentpart.CommentPart;
 import com.news.sky.util.DataTransform;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,49 +33,19 @@ import static com.news.sky.data.CommentPostJson.ORDER_TIME_DESC;
 public class CommentViewModel extends ViewModel {
     private final static String TAG="CommentViewModel";
 
+    private WeakReference<Context> weakReferenceContext;
     private MutableLiveData<List<CommentPart>> commentList;
     private int key=1;
+    private Long contentId;
+    private long clubId;
 
-    public MutableLiveData<List<CommentPart>> getCommentList(long contentId,long clubId){
+    public MutableLiveData<List<CommentPart>> getCommentList(Context context, long contentId,long clubId){
         if(commentList==null){
             commentList=new MutableLiveData<>();
-
-            Thread loadThread=new Thread(()-> {
-                List<CommentPart> allCommentList=new ArrayList<>();
-                AtomicReference<List<CommentPart>> hotCommentList=new AtomicReference<>();
-                AtomicReference<List<CommentPart>> moreCommentList=new AtomicReference<>();
-                Thread getHotCommentListThread = new Thread(()->{
-                    if(clubId!=-1){
-                        hotCommentList.set(getHotClubCommentList(clubId));
-                    }else {
-                        hotCommentList.set(getHotCommentList(contentId));
-                    }
-                });
-                Thread getMoreCommentListThread = new Thread(()->{
-                    if(clubId!=-1){
-                        moreCommentList.set(getMoreClubCommentList(clubId));
-                    }else {
-                        moreCommentList.set(getMoreCommentList(contentId));
-                    }
-
-                });
-                getHotCommentListThread.start();
-                getMoreCommentListThread.start();
-                try {
-                    getHotCommentListThread.join();
-                    getMoreCommentListThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(hotCommentList.get()!=null) {
-                    allCommentList.addAll(hotCommentList.get());
-                }
-                if(moreCommentList.get()!=null) {
-                    allCommentList.addAll(moreCommentList.get());
-                }
-                commentList.postValue(allCommentList);
-            });
-            loadThread.start();
+            this.contentId = contentId;
+            this.clubId = clubId;
+            this.weakReferenceContext = new WeakReference<>(context);
+            loadComment(commentList, contentId, clubId);
         }
         return commentList;
     }
@@ -98,6 +70,53 @@ public class CommentViewModel extends ViewModel {
         return true;
     }
 
+    public MutableLiveData<List<CommentPart>> refreshCommentList(){
+        if(commentList != null){
+            key = 1;
+            loadComment(commentList, contentId, clubId);
+        }
+        return commentList;
+    }
+
+    private void loadComment(MutableLiveData<List<CommentPart>> commentList, long contentId, long clubId) {
+        Thread loadThread=new Thread(()-> {
+            List<CommentPart> allCommentList=new ArrayList<>();
+            AtomicReference<List<CommentPart>> hotCommentList=new AtomicReference<>();
+            AtomicReference<List<CommentPart>> moreCommentList=new AtomicReference<>();
+            Thread getHotCommentListThread = new Thread(()->{
+                if(clubId!=-1){
+                    hotCommentList.set(getHotClubCommentList(clubId));
+                }else {
+                    hotCommentList.set(getHotCommentList(contentId));
+                }
+            });
+            Thread getMoreCommentListThread = new Thread(()->{
+                if(clubId!=-1){
+                    moreCommentList.set(getMoreClubCommentList(clubId));
+                }else {
+                    moreCommentList.set(getMoreCommentList(contentId));
+                }
+
+            });
+            getHotCommentListThread.start();
+            getMoreCommentListThread.start();
+            try {
+                getHotCommentListThread.join();
+                getMoreCommentListThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(hotCommentList.get()!=null) {
+                allCommentList.addAll(hotCommentList.get());
+            }
+            if(moreCommentList.get()!=null) {
+                allCommentList.addAll(moreCommentList.get());
+            }
+            commentList.postValue(allCommentList);
+        });
+        loadThread.start();
+    }
+
     private List<CommentPart> getHotCommentList(long id){
         Response<CommentJson> response;
         try {
@@ -114,7 +133,7 @@ public class CommentViewModel extends ViewModel {
             List<CommentPart> commentPartsByHeader=new ArrayList<>();
             if(commentParts.size()>0){
                 CommentSortMsg commentSortMsg=new CommentSortMsg();
-                commentSortMsg.setMsg("热门评论");
+                commentSortMsg.setMsg(weakReferenceContext.get().getResources().getString(R.string.hot_comment));
                 commentSortMsg.setType(TYPE_SORT_MSG);
                 commentPartsByHeader.add(commentSortMsg);
             }
@@ -140,7 +159,7 @@ public class CommentViewModel extends ViewModel {
             List<CommentPart> commentPartsByHeader=new ArrayList<>();
             if(commentParts.size()>0&&key==1){
                 CommentSortMsg commentSortMsg=new CommentSortMsg();
-                commentSortMsg.setMsg("全部评论");
+                commentSortMsg.setMsg(weakReferenceContext.get().getResources().getString(R.string.all_comment));
                 commentSortMsg.setType(TYPE_SORT_MSG);
                 commentPartsByHeader.add(commentSortMsg);
             }
@@ -167,7 +186,7 @@ public class CommentViewModel extends ViewModel {
             List<CommentPart> commentPartsByHeader=new ArrayList<>();
             if(commentParts.size()>0){
                 CommentSortMsg commentSortMsg=new CommentSortMsg();
-                commentSortMsg.setMsg("热门评论");
+                commentSortMsg.setMsg(weakReferenceContext.get().getResources().getString(R.string.hot_comment));
                 commentSortMsg.setType(TYPE_SORT_MSG);
                 commentPartsByHeader.add(commentSortMsg);
             }
@@ -194,7 +213,7 @@ public class CommentViewModel extends ViewModel {
             List<CommentPart> commentPartsByHeader=new ArrayList<>();
             if(commentParts.size()>0&&key==1){
                 CommentSortMsg commentSortMsg=new CommentSortMsg();
-                commentSortMsg.setMsg("全部评论");
+                commentSortMsg.setMsg(weakReferenceContext.get().getResources().getString(R.string.all_comment));
                 commentSortMsg.setType(TYPE_SORT_MSG);
                 commentPartsByHeader.add(commentSortMsg);
             }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Sky.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/bg_color_primary</item>
+        <!-- Customize your theme here. -->
+        <item name="android:windowSplashScreenBackground">@color/bg_color_primary</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_container</item>
+    </style>
+</resources>

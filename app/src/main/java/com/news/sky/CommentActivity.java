@@ -1,5 +1,6 @@
 package com.news.sky;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import com.billy.android.swipe.consumer.StayConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.news.sky.databinding.ActivityCommentBinding;
 import com.news.sky.util.AppUtil;
+import com.news.sky.util.UIUtil;
 
 public class CommentActivity extends AppCompatActivity {
     private final static String TAG="CommentActivity";
@@ -33,7 +35,6 @@ public class CommentActivity extends AppCompatActivity {
         if(actionBar!=null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
         if(getSupportFragmentManager().findFragmentById(R.id.comment_container)==null) {
             CommentFragment commentFragment=new CommentFragment();
             commentFragment.setArguments(getIntent().getExtras());
@@ -41,6 +42,7 @@ public class CommentActivity extends AppCompatActivity {
                     .add(R.id.comment_container, commentFragment, commentFragment.getTag())
                     .commit();
         }
+        UIUtil.setWindowTransparent(getWindow());
     }
 
     private void startListen(){

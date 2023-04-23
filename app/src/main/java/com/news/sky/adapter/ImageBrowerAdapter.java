@@ -86,44 +86,7 @@ public class ImageBrowerAdapter extends ListAdapter<ImageInfe, ImageBrowerAdapte
                     binding.indicator.hide();
                 }
             });
-            binding.bigImageView.setImageLoaderCallback(new ImageLoader.Callback() {
-                @Override
-                public void onCacheHit(int imageType, File image) {
 
-                }
-
-                @Override
-                public void onCacheMiss(int imageType, File image) {
-
-                }
-
-                @Override
-                public void onStart() {
-
-                }
-
-                @Override
-                public void onProgress(int progress) {
-
-                }
-
-                @Override
-                public void onFinish() {
-
-                }
-
-                @Override
-                public void onSuccess(File image) {
-                    if(binding.bigImageView.getSSIV()!=null){
-                        setSSIVListener(binding.bigImageView.getSSIV());
-                    }
-                }
-
-                @Override
-                public void onFail(Exception error) {
-
-                }
-            });
 
             binding.bigImageView.setOnClickListener(v -> ((Activity)v.getContext()).finish());
         }

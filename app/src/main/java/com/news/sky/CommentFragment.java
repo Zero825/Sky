@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieDrawable;
 import com.news.sky.adapter.CommentAdapter;
 import com.news.sky.databinding.FragmentCommentBinding;
 import com.news.sky.viewmodels.CommentViewModel;
@@ -34,14 +35,9 @@ public class CommentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding=FragmentCommentBinding.inflate(inflater,container,false);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         init();
         startListen();
+        return binding.getRoot();
     }
 
     private void init(){
@@ -53,9 +49,17 @@ public class CommentFragment extends Fragment {
         binding.commentRecyclerView.setAdapter(commentAdapter);
         binding.commentRecyclerView.setHasFixedSize(true);
 
-        commentViewModel=new ViewModelProvider(requireActivity()).get(CommentViewModel.class);
-        commentViewModel.getCommentList(bundle.getLong(CONTENT_ID),bundle.getLong(CLUB_ID))
-                .observe(getViewLifecycleOwner(), commentParts -> commentAdapter.submitList(commentParts));
+        commentViewModel = new ViewModelProvider(requireActivity()).get(CommentViewModel.class);
+        commentViewModel.getCommentList(requireContext(),bundle.getLong(CONTENT_ID),bundle.getLong(CLUB_ID))
+                .observe(getViewLifecycleOwner(), commentParts -> {
+                    binding.commentLoadingView.setVisibility(View.GONE);
+                    commentAdapter.submitList(commentParts);
+                    if (commentParts.size() == 0) {
+                        binding.commentNothingView.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.commentNothingView.setVisibility(View.GONE);
+                    }
+                });
 
     }
 
@@ -76,6 +80,26 @@ public class CommentFragment extends Fragment {
                     });
                     loadThread.start();
                 }
+            }
+        });
+        binding.btnLottieRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (!binding.btnLottieRefresh.isAnimating()) {
+                    binding.btnLottieRefresh.playAnimation();
+                    binding.btnLottieRefresh.setRepeatCount(LottieDrawable.INFINITE);
+                }
+                commentViewModel.refreshCommentList()
+                        .observe(getViewLifecycleOwner(), commentParts -> {
+                            binding.btnLottieRefresh.setRepeatCount(LottieDrawable.RESTART);
+                        });
+            }
+        });
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                requireActivity().finish();
             }
         });
     }

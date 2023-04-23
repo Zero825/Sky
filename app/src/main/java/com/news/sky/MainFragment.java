@@ -54,7 +54,7 @@ public class MainFragment extends Fragment {
         fragmentMainBinding.articleRecyclerView.setAdapter(articleInformationAdapter);
         fragmentMainBinding.articleRecyclerView.setHasFixedSize(true);
 
-        fragmentMainBinding.articleSwipeRefreshLayout.setColorSchemeColors(requireContext().getResources().getColor(R.color.purple_500));
+        fragmentMainBinding.articleSwipeRefreshLayout.setColorSchemeColors(requireContext().getResources().getColor(R.color.primary_color_3));
 
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         mainViewModel.getBannerList().observe(getViewLifecycleOwner(), articleInformationAdapter.getBannerViewPagerAdapter()::submitList);

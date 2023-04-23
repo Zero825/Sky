@@ -37,7 +37,7 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:text="@{comment.nickname}"
-            android:textColor="@color/text_color_dark"
+            android:textColor="@color/text_color_primary"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/comment_floor"
@@ -53,7 +53,7 @@
             android:layout_marginEnd="16dp"
             android:lineSpacingExtra="8sp"
             android:text="@{comment.content}"
-            android:textColor="@color/text_color_dark"
+            android:textColor="@color/text_color_primary"
             android:textSize="16sp"
             android:visibility='@{comment.content.equals("")?View.GONE:View.VISIBLE}'
             app:layout_constraintEnd_toEndOf="parent"

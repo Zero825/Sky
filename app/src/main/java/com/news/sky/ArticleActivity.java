@@ -16,6 +16,7 @@ import com.billy.android.swipe.consumer.StayConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.news.sky.databinding.ActivityArticleBinding;
 import com.news.sky.util.AppUtil;
+import com.news.sky.util.UIUtil;
 
 import static com.billy.android.swipe.SwipeConsumer.DIRECTION_RIGHT;
 
@@ -41,7 +42,6 @@ public class ArticleActivity extends AppCompatActivity {
         if(actionBar!=null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
         if(getSupportFragmentManager().findFragmentById(R.id.article_container)==null) {
             ArticleFragment articleFragment=new ArticleFragment();
             articleFragment.setArguments(getIntent().getExtras());
@@ -49,6 +49,7 @@ public class ArticleActivity extends AppCompatActivity {
                     .add(R.id.article_container, articleFragment, articleFragment.getTag())
                     .commit();
         }
+        UIUtil.setWindowTransparent(getWindow());
     }
 
     private void startListen(){
@@ -69,31 +70,7 @@ public class ArticleActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.article_bar_menu, menu);
-        return true;
-    }
-
-        @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id=item.getItemId();
-        if(id==R.id.article_comment){
-            openCommentActivity();
-            return true;
-        }else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void openCommentActivity(){
+    public void openCommentActivity(){
         Intent intent=new Intent(this,CommentActivity.class);
         intent.putExtras(getIntent().getExtras());
         startActivity(intent);

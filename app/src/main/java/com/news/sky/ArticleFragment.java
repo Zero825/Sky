@@ -1,6 +1,7 @@
 package com.news.sky;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -35,13 +36,9 @@ public class ArticleFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragmentArticleBinding=FragmentArticleBinding.inflate(inflater,container,false);
-        return fragmentArticleBinding.getRoot();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         init();
+        startListen();
+        return fragmentArticleBinding.getRoot();
     }
 
     private void init(){
@@ -58,6 +55,21 @@ public class ArticleFragment extends Fragment {
         articleViewModel = new ViewModelProvider(requireActivity()).get(ArticleViewModel.class);
         articleViewModel.getArticleLiveData(bundle.getLong(CONTENT_ID),bundle.getLong(CLUB_ID))
                 .observe(getViewLifecycleOwner(), articleAdapter::submitList);
+    }
+
+    private void startListen() {
+        fragmentArticleBinding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                requireActivity().finish();
+            }
+        });
+        fragmentArticleBinding.btnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((ArticleActivity)requireActivity()).openCommentActivity();
+            }
+        });
     }
 
     public static String getTAG() {
