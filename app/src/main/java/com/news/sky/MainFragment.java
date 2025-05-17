@@ -34,8 +34,7 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init();
         startListen();
     }
@@ -68,14 +67,9 @@ public class MainFragment extends Fragment {
             flag=0;
             lastFlag=0;
             Thread loadThread=new Thread(()->{
-                if(mainViewModel.refreshData()){
-
-                }else {
-
-                }
-                fragmentMainBinding.articleSwipeRefreshLayout.post(()->{
-                    fragmentMainBinding.articleSwipeRefreshLayout.setRefreshing(false);
-                });
+                mainViewModel.refreshData();
+                fragmentMainBinding.articleSwipeRefreshLayout.post(()->
+                        fragmentMainBinding.articleSwipeRefreshLayout.setRefreshing(false));
             });
             loadThread.start();
         });

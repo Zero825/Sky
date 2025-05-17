@@ -1,7 +1,9 @@
 package com.news.sky.adapter;
 
+import static com.news.sky.ArticleActivity.CLUB_ID;
+import static com.news.sky.ArticleActivity.CONTENT_ID;
+
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.gson.Gson;
 import com.news.sky.ArticleActivity;
 import com.news.sky.data.ArticleInformation;
 import com.news.sky.databinding.ItemArticlePrimaryBinding;
@@ -21,35 +25,30 @@ import com.news.sky.diffutil.ArticleDiffCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.login.LoginException;
-
-import static com.news.sky.ArticleActivity.CLUB_ID;
-import static com.news.sky.ArticleActivity.CONTENT_ID;
-
 public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final static String TAG="ArticleInfoAdapter";
+    private final static String TAG = "ArticleInfoAdapter";
 
-    private final static int ITEM_ARTICLE_PRIMARY=0;
-    private final static int ITEM_ARTICLE_SECONDARY=1;
-    private final static int ITEM_HEADER=2;
+    private final static int ITEM_ARTICLE_PRIMARY = 0;
+    private final static int ITEM_ARTICLE_SECONDARY = 1;
+    private final static int ITEM_HEADER = 2;
 
     private List<ArticleInformation> data;
     private final BannerViewPagerAdapter bannerViewPagerAdapter;
 
     public ArticleInformationAdapter() {
-        this.data=new ArrayList<>();
-        bannerViewPagerAdapter=new BannerViewPagerAdapter();
+        this.data = new ArrayList<>();
+        bannerViewPagerAdapter = new BannerViewPagerAdapter();
     }
 
     @Override
     public int getItemViewType(int position) {
 
-        if(data.get(position).getType()==ArticleInformation.TYPE_HEADER) {
+        if (data.get(position).getType() == ArticleInformation.TYPE_HEADER) {
             return ITEM_HEADER;
         }
-        if(data.get(position).getPreviewImageUrl().size()>1){
+        if (data.get(position).getPreviewImageUrl().size() > 1) {
             return ITEM_ARTICLE_SECONDARY;
-        }else {
+        } else {
             return ITEM_ARTICLE_PRIMARY;
         }
 
@@ -64,19 +63,37 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        if(viewType==ITEM_HEADER){
+        if (viewType == ITEM_HEADER) {
             ItemBannerBinding binding
-                    = ItemBannerBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+                    = ItemBannerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+            binding.bannerViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    super.onPageScrollStateChanged(state);
+                    int currentPosition = binding.bannerViewPager.getCurrentItem();
+                    int itemCount = bannerViewPagerAdapter.getItemCount();
+                    if (state == ViewPager2.SCROLL_STATE_IDLE
+                        || state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                        if (currentPosition == 1) {
+                            binding.bannerViewPager.setCurrentItem(itemCount - 3, false);
+                        } else if (currentPosition == itemCount - 2) {
+                            binding.bannerViewPager.setCurrentItem(2, false);
+                        }
+                    }
+                }
+            });
             binding.bannerViewPager.setAdapter(bannerViewPagerAdapter);
-            binding.bannerViewPager.setOffscreenPageLimit(3);
+            binding.bannerViewPager.setOffscreenPageLimit(6);
+            binding.bannerViewPager.setCurrentItem(2, false);
             return new BannerViewHolder(binding);
         }
 
-        if(viewType==ITEM_ARTICLE_SECONDARY){
+        if (viewType == ITEM_ARTICLE_SECONDARY) {
             ItemArticleSecondaryBinding binding
-                    = ItemArticleSecondaryBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+                    = ItemArticleSecondaryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new ArticleViewSecondaryHolder(binding);
-        }else {
+        } else {
             ItemArticlePrimaryBinding binding
                     = ItemArticlePrimaryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new ArticleViewPrimaryHolder(binding);
@@ -87,15 +104,15 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
 
-        if(holder.getItemViewType()==ITEM_ARTICLE_PRIMARY) {
-            ArticleViewPrimaryHolder articleViewPrimaryHolder=(ArticleViewPrimaryHolder) holder;
+        if (holder.getItemViewType() == ITEM_ARTICLE_PRIMARY) {
+            ArticleViewPrimaryHolder articleViewPrimaryHolder = (ArticleViewPrimaryHolder) holder;
             articleViewPrimaryHolder.binding.setArtilce(data.get(position));
             articleViewPrimaryHolder.articleOnClickListener.setContentId(data.get(position).getContentId());
             articleViewPrimaryHolder.articleOnClickListener.setClubId(data.get(position).getClubId());
         }
 
-        if(holder.getItemViewType()==ITEM_ARTICLE_SECONDARY){
-            ArticleViewSecondaryHolder articleViewSecondaryHolder=(ArticleViewSecondaryHolder) holder;
+        if (holder.getItemViewType() == ITEM_ARTICLE_SECONDARY) {
+            ArticleViewSecondaryHolder articleViewSecondaryHolder = (ArticleViewSecondaryHolder) holder;
             articleViewSecondaryHolder.binding.setArtilce(data.get(position));
             articleViewSecondaryHolder.articleOnClickListener.setContentId(data.get(position).getContentId());
             articleViewSecondaryHolder.articleOnClickListener.setClubId(data.get(position).getClubId());
@@ -104,11 +121,12 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
 
-
-    public void submitList(List<ArticleInformation> newData){
-        ArticleDiffCallback articleDiffCallback=new ArticleDiffCallback(data,newData);
-        DiffUtil.DiffResult diffResult=DiffUtil.calculateDiff(articleDiffCallback);
-        this.data=newData;
+    public void submitList(List<ArticleInformation> newData) {
+        Log.i(TAG, "old data = " + new Gson().toJson(data));
+        Log.i(TAG, "new data = " + new Gson().toJson(newData));
+        ArticleDiffCallback articleDiffCallback = new ArticleDiffCallback(data, newData);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(articleDiffCallback);
+        this.data = newData;
         diffResult.dispatchUpdatesTo(this);
     }
 
@@ -116,7 +134,7 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
         return bannerViewPagerAdapter;
     }
 
-    public static class ArticleOnClickListener implements View.OnClickListener{
+    public static class ArticleOnClickListener implements View.OnClickListener {
         private long contentId;
         private long clubId;
 
@@ -124,8 +142,8 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(v.getContext(), ArticleActivity.class);
-            intent.putExtra(CONTENT_ID,contentId);
-            intent.putExtra(CLUB_ID,clubId);
+            intent.putExtra(CONTENT_ID, contentId);
+            intent.putExtra(CLUB_ID, clubId);
             v.getContext().startActivity(intent);
         }
 
@@ -138,7 +156,7 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
-    public static class BannerViewHolder extends RecyclerView.ViewHolder{
+    public static class BannerViewHolder extends RecyclerView.ViewHolder {
         private ItemBannerBinding binding;
 
         public BannerViewHolder(ItemBannerBinding binding) {
@@ -147,27 +165,27 @@ public class ArticleInformationAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
-    public static class ArticleViewPrimaryHolder extends RecyclerView.ViewHolder{
+    public static class ArticleViewPrimaryHolder extends RecyclerView.ViewHolder {
         private ItemArticlePrimaryBinding binding;
         private ArticleOnClickListener articleOnClickListener;
 
         public ArticleViewPrimaryHolder(@NonNull ItemArticlePrimaryBinding binding) {
             super(binding.getRoot());
-            this.binding=binding;
+            this.binding = binding;
             this.binding.getRoot()
-                    .setOnClickListener(articleOnClickListener=new ArticleOnClickListener());
+                    .setOnClickListener(articleOnClickListener = new ArticleOnClickListener());
         }
     }
 
-    public static class ArticleViewSecondaryHolder extends RecyclerView.ViewHolder{
+    public static class ArticleViewSecondaryHolder extends RecyclerView.ViewHolder {
         private ItemArticleSecondaryBinding binding;
         private ArticleOnClickListener articleOnClickListener;
 
         public ArticleViewSecondaryHolder(@NonNull ItemArticleSecondaryBinding binding) {
             super(binding.getRoot());
-            this.binding=binding;
+            this.binding = binding;
             this.binding.getRoot()
-                    .setOnClickListener(articleOnClickListener=new ArticleOnClickListener());
+                    .setOnClickListener(articleOnClickListener = new ArticleOnClickListener());
         }
     }
 

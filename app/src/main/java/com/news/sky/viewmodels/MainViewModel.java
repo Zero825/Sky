@@ -1,14 +1,12 @@
 package com.news.sky.viewmodels;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.news.sky.api.GamerSkyApi;
+import com.news.sky.data.ArticleInformation;
 import com.news.sky.data.NewsJson;
 import com.news.sky.data.NewsPostJson;
-import com.news.sky.data.ArticleInformation;
 import com.news.sky.util.DataTransform;
 
 import java.io.IOException;
@@ -18,46 +16,46 @@ import java.util.List;
 import retrofit2.Response;
 
 public class MainViewModel extends ViewModel {
-    private final static String TAG="MainViewModel";
+    private final static String TAG = "MainViewModel";
 
     private MutableLiveData<List<ArticleInformation>> bannerList;
     private MutableLiveData<List<ArticleInformation>> articleList;
     private int key;
 
     public MainViewModel() {
-        this.key=1;
+        this.key = 1;
     }
 
     public MutableLiveData<List<ArticleInformation>> getBannerList() {
-        if(bannerList==null){
-            bannerList=new MutableLiveData<>();
-            Thread loadThread=new Thread(this::getAppBannerNews);
+        if (bannerList == null) {
+            bannerList = new MutableLiveData<>();
+            Thread loadThread = new Thread(this::getAppBannerNews);
             loadThread.start();
         }
         return bannerList;
     }
 
     public MutableLiveData<List<ArticleInformation>> getArticleList() {
-        if(articleList==null){
-            articleList=new MutableLiveData<>();
-            Thread loadThread=new Thread(() -> getAppNewsList(key));
+        if (articleList == null) {
+            articleList = new MutableLiveData<>();
+            Thread loadThread = new Thread(() -> getAppNewsList(key));
             loadThread.start();
         }
         return articleList;
     }
 
-    public boolean refreshData(){
+    public boolean refreshData() {
         return getAppBannerNews()
-            && getAppNewsList(this.key=1);
+                && getAppNewsList(this.key = 1);
     }
 
-    public boolean loadNextData(){
+    public boolean loadNextData() {
         this.key++;
         return getAppNewsList(this.key);
     }
 
 
-    private synchronized boolean getAppBannerNews(){
+    private synchronized boolean getAppBannerNews() {
         Response<NewsJson> response;
         try {
             response = GamerSkyApi.create()
@@ -68,15 +66,17 @@ public class MainViewModel extends ViewModel {
             return false;
         }
 
-        if(response.isSuccessful()){
-            bannerList.postValue(DataTransform.appNewsListJsonToArticleInformation(response.body()));
+        if (response.isSuccessful()) {
+            bannerList.postValue(
+                    addFakeData(
+                            DataTransform.appNewsListJsonToArticleInformation(response.body())));
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
-    private synchronized boolean getAppNewsList(int key){
+    private synchronized boolean getAppNewsList(int key) {
         NewsPostJson newsPostJson = NewsPostJson.getAppNewsListPostJson();
         newsPostJson.getRequest().setPageIndex(key);
         Response<NewsJson> response;
@@ -86,51 +86,59 @@ public class MainViewModel extends ViewModel {
                     .execute();
         } catch (IOException e) {
             e.printStackTrace();
-            if(this.key>2){
+            if (this.key > 2) {
                 this.key--;
             }
             return false;
         }
-        if(response.isSuccessful()){
-            NewsJson newsJson =response.body();
-            List<ArticleInformation> articleInformations=new ArrayList<>();
+        if (response.isSuccessful()) {
+            NewsJson newsJson = response.body();
+            List<ArticleInformation> articleInformations = new ArrayList<>();
             List<ArticleInformation> lastData = articleList.getValue();
-            if(key>1){
+            if (key > 1) {
                 articleInformations.addAll(lastData);
-            }else {
-                ArticleInformation headerArticleInformation=new ArticleInformation("",0,0,new ArrayList<>(), 0,0);
+            } else {
+                ArticleInformation headerArticleInformation = new ArticleInformation("", 0, 0, new ArrayList<>(), 0, 0);
                 headerArticleInformation.setType(ArticleInformation.TYPE_HEADER);
                 articleInformations.add(headerArticleInformation);
             }
             List<ArticleInformation> moreList = DataTransform.appNewsListJsonToArticleInformation(newsJson);
-            if(lastData!=null) {
+            if (lastData != null) {
                 int index = articleInformationIndexOf(lastData.get(lastData.size() - 1), moreList);
                 if (index != -1) {
                     moreList = moreList.subList(index, moreList.size());
-                }else if(key>1) {
+                } else if (key > 1) {
                     return false;
                 }
             }
             articleInformations.addAll(moreList);
             articleList.postValue(articleInformations);
             return true;
-        }else {
-            if(this.key>2){
-               this.key--;
+        } else {
+            if (this.key > 2) {
+                this.key--;
             }
             return false;
         }
     }
 
-    private int articleInformationIndexOf(ArticleInformation articleInformation,List<ArticleInformation> articleInformations){
-        int index=-1;
-        for(int i=0;i<articleInformations.size();i++){
-            if(articleInformations.get(i).getTime()<articleInformation.getTime()){
-               return i;
+    private int articleInformationIndexOf(ArticleInformation articleInformation, List<ArticleInformation> articleInformations) {
+        int index = -1;
+        for (int i = 0; i < articleInformations.size(); i++) {
+            if (articleInformations.get(i).getTime() < articleInformation.getTime()) {
+                return i;
             }
         }
         return index;
     }
 
-
+    private List<ArticleInformation> addFakeData(List<ArticleInformation> itemList) {
+        int realSize = itemList.size();
+        int fakeSize = realSize + 4;
+        List<ArticleInformation> listTemp = new ArrayList<>(fakeSize);
+        listTemp.addAll(itemList.subList(realSize - 2, realSize));
+        listTemp.addAll(itemList);
+        listTemp.addAll(itemList.subList(0, 2));
+        return listTemp;
+    }
 }

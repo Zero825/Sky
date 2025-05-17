@@ -1,28 +1,40 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            package com.news.sky.adapter;
+package com.news.sky.adapter;
 
+import android.Manifest;
 import android.app.Activity;
-import android.graphics.Point;
-import android.graphics.PointF;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.view.Display;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.github.piasy.biv.indicator.ProgressIndicator;
-import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.utils.IOUtils;
 import com.github.piasy.biv.view.BigImageView;
 import com.github.piasy.biv.view.GlideImageViewFactory;
+import com.news.sky.R;
 import com.news.sky.commentpart.ImageInfe;
 import com.news.sky.databinding.ItemBigImageBinding;
+import com.news.sky.util.SnackbarUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class ImageBrowerAdapter extends ListAdapter<ImageInfe, ImageBrowerAdapter.ImageBorwerViewHolder> {
 
@@ -44,7 +56,7 @@ public class ImageBrowerAdapter extends ListAdapter<ImageInfe, ImageBrowerAdapte
     @Override
     public ImageBorwerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemBigImageBinding binding = ItemBigImageBinding
-                .inflate(LayoutInflater.from(parent.getContext()),parent,false);
+                .inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new ImageBorwerViewHolder(binding);
     }
 
@@ -63,7 +75,7 @@ public class ImageBrowerAdapter extends ListAdapter<ImageInfe, ImageBrowerAdapte
             init();
         }
 
-        private void init(){
+        private void init() {
             binding.bigImageView.setImageViewFactory(new GlideImageViewFactory());
             binding.bigImageView.setProgressIndicator(new ProgressIndicator() {
                 @Override
@@ -78,7 +90,7 @@ public class ImageBrowerAdapter extends ListAdapter<ImageInfe, ImageBrowerAdapte
 
                 @Override
                 public void onProgress(int progress) {
-                    binding.indicator.setProgressCompat(progress,true);
+                    binding.indicator.setProgressCompat(progress, true);
                 }
 
                 @Override
@@ -86,81 +98,54 @@ public class ImageBrowerAdapter extends ListAdapter<ImageInfe, ImageBrowerAdapte
                     binding.indicator.hide();
                 }
             });
-
-
-            binding.bigImageView.setOnClickListener(v -> ((Activity)v.getContext()).finish());
-        }
-
-        private void setSSIVListener(SubsamplingScaleImageView subsamplingScaleImageView){
-            subsamplingScaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.OnImageEventListener() {
-                @Override
-                public void onReady() {
-                    letSSIVSmooth(subsamplingScaleImageView);
+            binding.bigImageView.setOnClickListener(view -> ((Activity) view.getContext()).finish());
+            binding.bigImageView.setOnLongClickListener(view -> {
+                if (ActivityCompat.checkSelfPermission(view.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) view.getContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                    return false;
                 }
-
-                @Override
-                public void onImageLoaded() {
-
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    return false;
                 }
-
-                @Override
-                public void onPreviewLoadError(Exception e) {
-
+                if (saveImage(view.getContext(), binding.bigImageView.getCurrentImageFile())) {
+                    SnackbarUtils.showShortSnackbar(view, view.getContext().getResources().getString(R.string.image_save_success));
+                } else {
+                    SnackbarUtils.showShortSnackbar(view, view.getContext().getResources().getString(R.string.image_save_fail));
                 }
-
-                @Override
-                public void onImageLoadError(Exception e) {
-
-                }
-
-                @Override
-                public void onTileLoadError(Exception e) {
-
-                }
-
-                @Override
-                public void onPreviewReleased() {
-
-                }
+                return true;
             });
-        }
-
-        private void letSSIVSmooth(SubsamplingScaleImageView subsamplingScaleImageView){
-            subsamplingScaleImageView.setMaxScale(5.0f);
-            subsamplingScaleImageView.setDoubleTapZoomDuration(300);
-
-            final int LONG_IMAGE_SIZE_RATIO = 2;
-            float result = 0.5f;
-            int imageWidth = subsamplingScaleImageView.getSWidth();
-            int imageHeight = subsamplingScaleImageView.getSHeight();
-            int viewWidth = subsamplingScaleImageView.getWidth();
-            int viewHeight = subsamplingScaleImageView.getHeight();
-
-            boolean hasZeroValue = false;
-            if (imageWidth == 0 || imageHeight == 0 || viewWidth == 0 || viewHeight == 0) {
-                result = 0.5f;
-                hasZeroValue = true;
-            }
-
-            if (!hasZeroValue) {
-
-                result = (float) viewHeight / imageHeight;
-
-            }
-
-            if (!hasZeroValue && (float) imageHeight / imageWidth > LONG_IMAGE_SIZE_RATIO) {
-                result = (float) viewWidth / imageWidth;
-                // scale at top
-                subsamplingScaleImageView
-                        .animateScaleAndCenter(result, new PointF(imageWidth / 2, 0))
-                        .withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)
-                        .start();
-                subsamplingScaleImageView.setDoubleTapZoomScale(result+0.5f);
-            }else {
-                subsamplingScaleImageView.setDoubleTapZoomScale(result);
-            }
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public static boolean saveImage(Context context, File file) {
+        OutputStream outputStream = null;
+        FileInputStream inputStream = null;
+        Uri imageUri;
+        boolean isSave;
+        try {
+            ContentResolver resolver = context.getContentResolver();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME,
+                    file.getName());
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH,
+                    Environment.DIRECTORY_PICTURES);
+            imageUri =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
+            if (imageUri != null) {
+                outputStream = resolver.openOutputStream(imageUri);
+                inputStream = new FileInputStream(file);
+                IOUtils.copy(inputStream, outputStream);
+            }
+            isSave = true;
+        } catch (IOException e) {
+            isSave = false;
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(outputStream);
+        }
+        return isSave;
+    }
 }

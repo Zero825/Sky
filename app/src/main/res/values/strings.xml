@@ -12,4 +12,9 @@
     <string name="reply">回复</string>
     <string name="hot_comment">热门评论</string>
     <string name="all_comment">全部评论</string>
+
+    <string name="download">下载</string>
+
+    <string name="image_save_success">图片保存成功</string>
+    <string name="image_save_fail">图片保存失败</string>
 </resources>

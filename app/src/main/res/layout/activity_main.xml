@@ -7,17 +7,6 @@
     android:background="@color/bg_color_primary"
     tools:context=".MainActivity">
 
-    <com.news.sky.customview.LinearColorsView
-        android:id="@+id/linearColorsView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/white"
-        android:elevation="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/top_bar"
-        app:layout_constraintEnd_toEndOf="@id/top_bar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
@@ -27,6 +16,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/linearColorsView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/image_top_home" />
 
         <TextView
             android:id="@+id/home_title"
@@ -38,6 +34,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

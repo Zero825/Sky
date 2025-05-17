@@ -6,9 +6,9 @@ android {
     namespace 'com.news.sky'
     defaultConfig {
         applicationId "com.news.sky"
-        minSdkVersion 21
-        targetSdkVersion 32
-        compileSdkVersion 32
+        minSdkVersion 23
+        targetSdkVersion 33
+        compileSdkVersion 33
         versionCode 1
         versionName "1.0"
 

@@ -38,6 +38,9 @@ public class DataTransform {
     private final static String TAG = "DataTransform";
 
     public static List<ArticleInformation> appNewsListJsonToArticleInformation(NewsJson newsJson) {
+        if (newsJson == null) {
+            return new ArrayList<>();
+        }
         List<NewsJson.Result> results = newsJson.getResult();
         List<ArticleInformation> articleInformations = new ArrayList<>();
         for (NewsJson.Result result : results) {
